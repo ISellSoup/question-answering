@@ -1,14 +1,28 @@
 {
-"questions":[
-{"title":"ee","type":"text","answers":[
-{"content":"a","correct":true},
-{"content":"b","correct":false}
-]},
-{"title":"Whales","type":"single-choice","answers":[
-{"content":"Mudslide","correct":false},
-{"content":"Cheese","correct":false},
-{"content":"Rhino","correct":false},
-{"content":"Puddle","correct":true}
-]}
-]
+    "meta":{
+        "displayName":"Debug"
+    },
+    "data":[
+        {"type":"wordBank","list":["blah","bleh"]}
+    ],
+	"questions":[
+		{
+			"title":"ee",
+			"type":"text",
+			"answers":[
+				{"content":"a","correct":true},
+				{"content":"b","correct":false}
+			]
+		},
+		{
+			"title":"Whales",
+			"type":"single-choice",
+			"answers":[
+				{"content":"Mudslide","correct":false},
+				{"content":"Cheese","correct":false},
+				{"content":"Rhino","correct":false},
+				{"content":"Puddle","correct":true}
+			]
+		}
+	]
 }
