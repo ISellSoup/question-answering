@@ -1,47 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-#Questions {
-display: flex;
-}
-.question {
-background-color:gray;
-border:10px solid blue;
-margin:5px;
-}
-</style>
+<link rel="stylesheet" href="styles/global.css">
+<script src="modules/load set.js"></script>
 <script>
+//const urlParams = new URLSearchParams(window.location.search);
+//const setName = (new String(urlParams.get("setName"))).toString();
+//const setType = urlParams.get("setType") ?? "built-in";
 
-</script>
-<script>
-function init() {
-let Questions = document.getElementById("Questions")
-data.questions.forEach((question, index) => {
-let question = document.createElement("div")
-question.class = "question"
-question.innerHTML += `<h1>${question.title}</h1>`
-
-question.answers.forEach((answer) => {
-question.innerHTML += `<button>${answer.content}</button>`
-});
-
-Questions.appendChild(question)
-});
+async function loadSet() {
+    console.log(await fetchBuiltInSet("debug"))
 }
-
-if (document.readyState == "loading") {
-document.addEventListener("DOMContentLoaded", init);
-} else {
-init()
-}
-
-
-
+loadSet()
 </script>
-</head>
-<body>
-<div id="Questions">
-</div>
+
+
 </body>
 </html>
