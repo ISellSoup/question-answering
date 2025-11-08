@@ -1,4 +1,4 @@
-async function fetchBuiltInSet(setName) {
+export async function fetchBuiltInSet(setName) {
     try {
         const url = `built in sets/${encodeURIComponent(setName)}.json`
         console.log(url)
@@ -12,4 +12,3 @@ async function fetchBuiltInSet(setName) {
         return {success:false, err:err}
     }
 }
-
