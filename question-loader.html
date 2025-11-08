@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-<link rel="stylesheet" href="styles/global.css">
-<script src="modules/load set.js"></script>
-<script>
-//const urlParams = new URLSearchParams(window.location.search);
-//const setName = (new String(urlParams.get("setName"))).toString();
-//const setType = urlParams.get("setType") ?? "built-in";
-
-async function loadSet() {
-    console.log(await fetchBuiltInSet("debug"))
-}
-loadSet()
-</script>
+    <head>
+        <link rel="stylesheet" href="styles/global.css">
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const setName = (new String(urlParams.get("setName"))).toString();
+            const setType = urlParams.get("setType") ?? "built-in";
 
 
-</body>
+
+            if (setType=="built-in") {
+                import {fetchBuiltInSet} from "modules/fetchSet.js"
+            }
+
+            async function loadSet() {
+                console.log(await fetchBuiltInSet("debug"))
+            }
+            loadSet()
+        </script>
+
+    </head>
+    <body>
+    </body>
 </html>
