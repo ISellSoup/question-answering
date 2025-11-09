@@ -1,25 +1,57 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="styles/global.css">
+
         <script>
             const urlParams = new URLSearchParams(window.location.search);
             const setName = (new String(urlParams.get("setName"))).toString();
             const setType = urlParams.get("setType") ?? "built-in";
+            const setLoadedEvent = new Event('custom:setLoaded');
+            
+            let loadedSet = null;
 
+            try {
+                if (setType=="built-in") {
+                    console.log('Loading module "fetchSet.js"');
 
+                    import('/modules/fetchSet.js')
+                    .then((async (response) => {
+                        console.log('Module "fetchSet.js" loaded', "Fetching built-in set:", setName);
 
-            if (setType=="built-in") {
-                import {fetchBuiltInSet} from "modules/fetchSet.js"
+                        loadedSet = await response.fetchBuiltInSet(setName);
+                        window.dispatchEvent(setLoadedEvent);
+                    }))
+                    .catch((error) => {
+
+                        console.error('Error loading module "fetchSet.js":', error);
+                        throw "";
+                    });
+                } else if (setType=="local") {
+                    console.log("Parsing local set:", setName);
+
+                    loadedSet = JSON.parse(localStorage.getItem(`placeholder`));
+                    window.dispatchEvent(setLoadedEvent);
+                } else {
+                    console.error("Unknown set type:", setType);
+                    throw "";
+                }
+
+            } catch (err) {
+                console.warn(`Failed to load set "${setName}" of type "${setType}"`)
+
+                document.body.innerHTML += `<h1>Failed to load ${setType} set "${setName}"</h1>`
             }
-
-            async function loadSet() {
-                console.log(await fetchBuiltInSet("debug"))
-            }
-            loadSet()
         </script>
+        <script>
+            window.addEventListener('custom:setLoaded', () => {
+                console.log('Set loaded:', loadedSet);
 
+                document.body.innerHTML += `<h1>Loaded set: ${loadedSet.meta.displayName}</h1>`
+            });
+        </script>
+        <link rel="stylesheet" href="styles/global.css">
     </head>
     <body>
+        <button onclick="console.log('click')">Print</button>
     </body>
 </html>
