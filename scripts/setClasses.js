@@ -1,7 +1,11 @@
+const treeUpdateEvent = new Event("application:treeUpdate");
+
 class Collection {
     constructor(contents = []) {
         this.contents = contents;
         this.displayName = "";
+
+        this.className = "Collection";
     }
 }
 
@@ -9,6 +13,8 @@ class SubCollection extends Collection {
     constructor(contents = []) {
         super(contents);
         this.parent = null;
+
+        this.className = "SubCollection";
     }
 }
 
@@ -17,8 +23,11 @@ class WordBankEntry {
         this.value = value;
         this.parent = null;
         this.enabled = true;
+
+        this.className = "WordBankEntry";
     }
     convertToWordBank() {
+        window.dispatchEvent(treeUpdateEvent);
         return new WordBank([this]); // Make sure to let the user name the wordbank immediately after conversion
     }
 }
@@ -27,6 +36,8 @@ class WordBank extends SubCollection {
     constructor(contents = []) {
         super(contents);
         this.enabled = true; // This property doesn't work on top-level WordBanks
+
+        this.className = "WordBank";
     }
     isTopLevel() {
         let isTopLevel = true;
@@ -50,6 +61,8 @@ class QuestionAsnwerPair {
         this.answer = answer;
         this.parent = null;
         this.enabled = true;
+
+        this.className = "QuestionAsnwerPair";
     }
 }
 
@@ -58,10 +71,14 @@ class Group extends SubCollection {
     constructor(contents = []) {
         super(contents);
         this.enabled = true;
+
+        this.className = "Group";
     }
     convertToFolder() {
         const folder = new Folder(this.contents);
         folder.displayName = this.displayName;
+
+        window.dispatchEvent(treeUpdateEvent);
         return folder;
     }
 }
@@ -70,6 +87,8 @@ class Group extends SubCollection {
 class Folder extends SubCollection {
     constructor(contents = []) {
         super(contents);
+        
+        this.className = "Folder";
     }
     convertToGroup() {
         this.contents.forEach(item => {
@@ -79,6 +98,8 @@ class Folder extends SubCollection {
         });
         const group = new Group(this.contents);
         group.displayName = this.displayName;
+
+        window.dispatchEvent(treeUpdateEvent);
         return group;
     }
 }
@@ -90,5 +111,7 @@ class Set extends Collection {
 
         // Indexes to objects in contents or direct objects (Groups count as objects)
         this.body = [];
+
+        this.className = "Set";
     }
 }

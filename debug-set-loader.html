@@ -6,7 +6,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const setName = (new String(urlParams.get("setName"))).toString();
             const setType = urlParams.get("setType") ?? "built-in";
-            const setLoadedEvent = new Event('custom:setLoaded');
+            const setLoadedEvent = new Event("application:setLoaded");
             
             let loadedSet = null;
 
@@ -43,10 +43,10 @@
             }
         </script>
         <script>
-            window.addEventListener('custom:setLoaded', () => {
+            window.addEventListener('application:setLoaded', () => {
                 console.log('Set loaded:', loadedSet);
 
-                document.body.innerHTML += `<h1>Loaded set: ${loadedSet.meta.displayName}</h1>`
+                document.body.innerHTML += `<h1>Loaded set: ${loadedSet.displayName}</h1>`
             });
         </script>
         <link rel="stylesheet" href="styles/global.css">
