@@ -8,14 +8,22 @@ function plainObjectToClass(object, className) {
 
 function classObjectToPlain(object) {
     const output = Object.assign({},object)
-    delete output.temp
+    delete output.temp // Delete temporary data
+    for (const Key in output) { // Delete class methods
+        if (output.Key instanceof Function) delete output.Key;
+    }
+
     return output
 }
 
 function depthConvert(object, callback) {
-        if (object.contents) object.contents.array.forEach(depthConvert);
-        callback(object)
-    }
+    if (object.contents) {
+        const contents = []
+        object.contents.array.forEach((item)=>{contents.push(depthConvert(item,callback))})
+        object.contents = contents
+    };
+    return callback(object)
+}
 
 export function dataToSet(data) {
     return depthConvert(data,plainObjectToClass);

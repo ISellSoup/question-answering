@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-
         <script>
             const urlParams = new URLSearchParams(window.location.search);
             const setName = (new String(urlParams.get("setName"))).toString();
@@ -12,18 +11,18 @@
 
             try {
                 if (setType=="built-in") {
-                    console.log('Loading module "fetchSet.js"');
+                    console.log('Loading module "jsonFetch.js"');
 
-                    import('/modules/fetchSet.js')
+                    import('/modules/jsonFetch.js')
                     .then((async (response) => {
-                        console.log('Module "fetchSet.js" loaded', "Fetching built-in set:", setName);
+                        console.log('Module "jsonFetch.js" loaded', "Fetching built-in set:", setName);
 
                         loadedSet = await response.fetchBuiltInSet(setName);
                         window.dispatchEvent(setLoadedEvent);
                     }))
                     .catch((error) => {
 
-                        console.error('Error loading module "fetchSet.js":', error);
+                        console.error('Error loading module "jsonFetch.js":', error);
                         throw "";
                     });
                 } else if (setType=="local") {

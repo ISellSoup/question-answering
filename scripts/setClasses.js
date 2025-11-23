@@ -1,14 +1,19 @@
 const treeUpdateEvent = new Event("application:treeUpdate");
-let bodyAllowList = [
+let bodyAllowList = [ // Only these classes can be added to the set's body
     "ContentReference",
     "Group",
     "Folder",
     "QuestionAsnwersPair"
 ]
+let contentsDenyList = [ // These classes cannot be added to the set's contents
+    "ContentReference"
+]
 
 class ApplicationObject extends EventTarget {
     constructor() {
-        this.temp = {} // Values inside temp are not saved
+        this.temp = {
+            parent:null
+        } // Values inside temp are not saved
         this.editor = {} // Editor metadata
     }
 }
@@ -23,20 +28,10 @@ class Collection extends ApplicationObject {
     }
 }
 
-class SubCollection extends Collection {
-    constructor(contents = []) {
-        super(contents);
-        this.temp.parent = null;
-
-        this.className = "SubCollection";
-    }
-}
-
 class WordBankEntry extends ApplicationObject {
     constructor(value = "") {
         super()
         this.value = value;
-        this.temp.parent = null;
         this.enabled = true;
 
         this.className = "WordBankEntry";
@@ -47,7 +42,7 @@ class WordBankEntry extends ApplicationObject {
     }
 }
 
-class WordBank extends SubCollection {
+class WordBank extends Collection {
     constructor(contents = []) {
         super(contents);
         this.enabled = true;
@@ -62,7 +57,6 @@ class QuestionAsnwersPair extends ApplicationObject {
         this.question = question;
         // Can be a string or a WordBank
         this.answers = answers;
-        this.temp.parent = null;
         this.enabled = true;
 
         this.className = "QuestionAsnwerPair";
@@ -70,7 +64,7 @@ class QuestionAsnwersPair extends ApplicationObject {
 }
 
 // Groups of other Groups or objects, used for batch enable/disable
-class Group extends SubCollection {
+class Group extends Collection {
     constructor(contents = []) {
         super(contents);
         this.enabled = true;
@@ -87,10 +81,9 @@ class Group extends SubCollection {
 }
 
 // Folders do not have an enabled property. Passes parent's enabled/disabled.
-class Folder extends SubCollection {
+class Folder extends Collection {
     constructor(contents = []) {
         super(contents);
-        
         this.className = "Folder";
     }
     convertToGroup() {
@@ -107,7 +100,6 @@ class ContentReference extends ApplicationObject {
         super()
         this.path = []; //An array of indexes pointing to the target
         this.temp.target = null; 
-        this.temp.parent = null;
         this.enabled = true;
 
         this.className = "QuestionAsnwerPair";
