@@ -1,23 +1,26 @@
 function plainObjectToClass(object, className) {
-    if (!object.className || !className) return;
-    if (object.className) className = object.className;
+    className ??= object.className
+    if (!className) return;
 
-    const output = new window[className]
-    Object.assign(output,object)
+    const newObject = new window[className]()
+    return Object.assign(newObject,object)
 }
 
-export function dataToDatamodel(data) {
-    const output = {};
-
-
-
-    return output;
+function classObjectToPlain(object) {
+    const output = Object.assign({},object)
+    delete output.temp
+    return output
 }
 
-export function datamodelToData(datamodel) {
-    const output = {};
+function depthConvert(object, callback) {
+        if (object.contents) object.contents.array.forEach(depthConvert);
+        callback(object)
+    }
 
+export function dataToSet(data) {
+    return depthConvert(data,plainObjectToClass);
+}
 
-
-    return output;
+export function setToData(set) {
+    return depthConvert(data,classObjectToPlain);
 }

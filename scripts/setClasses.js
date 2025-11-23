@@ -1,7 +1,21 @@
 const treeUpdateEvent = new Event("application:treeUpdate");
+let bodyAllowList = [
+    "ContentReference",
+    "Group",
+    "Folder",
+    "QuestionAsnwersPair"
+]
 
-class Collection {
+class ApplicationObject extends EventTarget {
+    constructor() {
+        this.temp = {} // Values inside temp are not saved
+        this.editor = {} // Editor metadata
+    }
+}
+
+class Collection extends ApplicationObject {
     constructor(contents = []) {
+        super()
         this.contents = contents;
         this.displayName = "";
 
@@ -12,16 +26,17 @@ class Collection {
 class SubCollection extends Collection {
     constructor(contents = []) {
         super(contents);
-        this.parent = null;
+        this.temp.parent = null;
 
         this.className = "SubCollection";
     }
 }
 
-class WordBankEntry {
+class WordBankEntry extends ApplicationObject {
     constructor(value = "") {
+        super()
         this.value = value;
-        this.parent = null;
+        this.temp.parent = null;
         this.enabled = true;
 
         this.className = "WordBankEntry";
@@ -35,38 +50,26 @@ class WordBankEntry {
 class WordBank extends SubCollection {
     constructor(contents = []) {
         super(contents);
-        this.enabled = true; // This property doesn't work on top-level WordBanks
+        this.enabled = true;
 
         this.className = "WordBank";
     }
-    isTopLevel() {
-        let isTopLevel = true;
-
-        function checkParent(item) {
-            if (item instanceof WordBank) isTopLevel = false;
-
-            if (item.parent) {
-                checkParent(item.parent);
-            }
-        }
-        checkParent(this.parent);
-        return isTopLevel;
-    }
 }
 
-class QuestionAsnwerPair {
-    constructor(question = "", answer = "") {
+class QuestionAsnwersPair extends ApplicationObject {
+    constructor(question = "", answers = []) {
+        super()
         this.question = question;
         // Can be a string or a WordBank
-        this.answer = answer;
-        this.parent = null;
+        this.answers = answers;
+        this.temp.parent = null;
         this.enabled = true;
 
         this.className = "QuestionAsnwerPair";
     }
 }
 
-// Groups of other Groups or objects, used for batch enable/disable. The top level of a WordBank cannot be put in a Group.
+// Groups of other Groups or objects, used for batch enable/disable
 class Group extends SubCollection {
     constructor(contents = []) {
         super(contents);
@@ -83,7 +86,7 @@ class Group extends SubCollection {
     }
 }
 
-// Folders can contain any objects, but do not have an enabled property.
+// Folders do not have an enabled property. Passes parent's enabled/disabled.
 class Folder extends SubCollection {
     constructor(contents = []) {
         super(contents);
@@ -91,11 +94,6 @@ class Folder extends SubCollection {
         this.className = "Folder";
     }
     convertToGroup() {
-        this.contents.forEach(item => {
-            if (item instanceof WordBank) {
-                if (item.isTopLevel()) return; // Groups cannot contain top-level WordBanks
-            }
-        });
         const group = new Group(this.contents);
         group.displayName = this.displayName;
 
@@ -104,12 +102,23 @@ class Folder extends SubCollection {
     }
 }
 
+class ContentReference extends ApplicationObject {
+    constructor() {
+        super()
+        this.path = []; //An array of indexes pointing to the target
+        this.temp.target = null; 
+        this.temp.parent = null;
+        this.enabled = true;
+
+        this.className = "QuestionAsnwerPair";
+    }
+}
+
 class Set extends Collection {
     constructor() {
         super([]);
         this.description = "";
 
-        // Indexes to objects in contents or direct objects (Groups count as objects)
         this.body = [];
 
         this.className = "Set";
