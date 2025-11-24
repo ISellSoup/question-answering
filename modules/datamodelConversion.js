@@ -10,7 +10,7 @@ function classObjectToPlain(object) {
     const output = Object.assign({},object)
     delete output.temp // Delete temporary data
     for (const Key in output) { // Delete class methods
-        if (output.Key instanceof Function) delete output.Key;
+        if (typeof output.Key == "function") delete output.Key;
     }
 
     return output
