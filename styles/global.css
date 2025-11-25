@@ -1,0 +1,13 @@
+:root {
+    color-scheme: light dark;
+    --base-dark: #262b46;
+    --base-light: #b4c6ff;
+    --text-light: black;
+    --text-dark: white;
+}
+
+body {
+    background-color: light-dark(var(--base-light),var(--base-dark));
+    font-family: Arial, Helvetica, sans-serif;
+    color: light-dark(var(--text-light),var(--text-dark));
+}

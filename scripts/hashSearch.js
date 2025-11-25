@@ -3,10 +3,12 @@ window.addEventListener("hashchange", ()=>{
     let hashMatch = false;
     const selectedElements = [];
 
-    document.querySelectorAll("h1").forEach((element)=>{
+    document.querySelectorAll("h2").forEach((element)=>{
         let name = element.innerText
 
         if (element.dataset.hash!==undefined) {
+            name = element.dataset.hash;
+
             if (!hashMatch) {
                 hashMatch = true;
                 selectedElements.length = 0;
@@ -20,5 +22,7 @@ window.addEventListener("hashchange", ()=>{
         }
     })
 
-    // Stuff
+    if (selectedElements.length > 0) {
+        selectedElements[0].scrollIntoView();
+    }
 })

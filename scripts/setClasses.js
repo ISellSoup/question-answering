@@ -28,6 +28,37 @@ class Collection extends ApplicationObject {
     }
 }
 
+class Set extends Collection {
+    constructor() {
+        super([]);
+        this.description = "";
+
+        this.body = [];
+
+        this.className = "Set";
+    }
+}
+
+class ContentReference extends ApplicationObject {
+    constructor() {
+        super()
+        this.path = []; //An array of indexes pointing to the target
+        this.temp.target = null; 
+        this.enabled = true;
+
+        this.className = "QuestionAsnwerPair";
+    }
+}
+
+class WordBank extends Collection {
+    constructor(contents = []) {
+        super(contents);
+        this.enabled = true;
+
+        this.className = "WordBank";
+    }
+}
+
 class WordBankEntry extends ApplicationObject {
     constructor(value = "") {
         super()
@@ -42,16 +73,7 @@ class WordBankEntry extends ApplicationObject {
     }
 }
 
-class WordBank extends Collection {
-    constructor(contents = []) {
-        super(contents);
-        this.enabled = true;
-
-        this.className = "WordBank";
-    }
-}
-
-class QuestionAsnwersPair extends ApplicationObject {
+class QuestionAnswersPair extends ApplicationObject {
     constructor(question = "", answers = []) {
         super()
         this.question = question;
@@ -95,27 +117,5 @@ class Folder extends Collection {
 
         window.dispatchEvent(treeUpdateEvent);
         return group;
-    }
-}
-
-class ContentReference extends ApplicationObject {
-    constructor() {
-        super()
-        this.path = []; //An array of indexes pointing to the target
-        this.temp.target = null; 
-        this.enabled = true;
-
-        this.className = "QuestionAsnwerPair";
-    }
-}
-
-class Set extends Collection {
-    constructor() {
-        super([]);
-        this.description = "";
-
-        this.body = [];
-
-        this.className = "Set";
     }
 }
