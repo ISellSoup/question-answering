@@ -12,6 +12,6 @@ export async function fetchJSON(url) {
 }
 
 export async function fetchBuiltInSet(setName) {
-    const output = await fetchJSON(`built-in content/sets/${encodeURIComponent(setName)}.json`)
+    const output = await fetchJSON(`/built-in content/sets/${encodeURIComponent(setName)}.json`)
     return {success:output.success, set:output.response}
 }

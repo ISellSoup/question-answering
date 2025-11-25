@@ -71,9 +71,10 @@ class Group extends Collection {
 
         this.className = "Group";
     }
-    convertToFolder() {
+    folder() {
         const folder = new Folder(this.contents);
         folder.displayName = this.displayName;
+        folder.temp.group_state_disabled = !this.enabled
 
         window.dispatchEvent(treeUpdateEvent);
         return folder;
@@ -86,9 +87,11 @@ class Folder extends Collection {
         super(contents);
         this.className = "Folder";
     }
-    convertToGroup() {
+    group() {
         const group = new Group(this.contents);
         group.displayName = this.displayName;
+
+        if (this.temp.group_state_disabled) group.enabled = false;
 
         window.dispatchEvent(treeUpdateEvent);
         return group;
