@@ -2,7 +2,6 @@ export function evalPathInstruction(originObject,instruction) {
     if (typeof originObject != "object" || originObject===null) throw new Error("No originObject passed to evalPathInstruction function");
     if (typeof instruction != "object" || instruction===null) throw new Error("No instruction passed to evalPathInstruction function");
 
-    const origin = (typeof instruction.origin == "string")&&instruction.origin||"content" // Property of originObject that contains the array
     const index = (typeof instruction.index == "number")&&instruction.index||undefined
     const parent = (typeof instruction.parent == "boolean")&&instruction.parent||false // Should the object's parent be used?
 
@@ -11,19 +10,19 @@ export function evalPathInstruction(originObject,instruction) {
 
     if (index===undefined) return originObject; // Intended for situations where parent is true (to get the originObject's parent)
 
-    let content = originObject[origin]
-    if (typeof content != "object" || content===null) throw new Error(`Origin "${origin}" doesn't exist on this object`);
+    let content = originObject.contents;
+    if (typeof content != "object" || content===null) throw new Error(`Origin object's contents is not an object`);
 
     return content[index]
 }
 
-export function findObjectByPath(originObject,path) {
-    let output;
-    
+export function findObjectByPath(path,originObject) {
+    let output = originObject ?? window.activeSet;
+
     for (let index = 0; index < path.length; index++) {
         try {
-            if (typeof originObject != "object" || originObject===null) break;
-            originObject = evalPathInstruction(originObject,path[index])
+            if (typeof output != "object" || output===null) break;
+            output = evalPathInstruction(output,path[index])
         } catch(err) {
             throw new Error(`Error following path instruction at path index ${index}: ${err}`)
         }
@@ -32,9 +31,61 @@ export function findObjectByPath(originObject,path) {
     return output;
 }
 
-export function getObjectPath(object) {
+export function getAbsolutePath(object) {
     let path = [];
-    object.temp.parent.content.indexof(object)
+
+    while (true) {
+        if (object.temp.parent===null) return path;
+
+        const parent = object.temp.parent;
+        path.unshift(parent.contents.indexOf(object));
+        object = parent;
+    }
+}
+
+export function getRelativePath(fromObject,toObject) {
+    const fromPath = getAbsolutePath(fromObject);
+    const toPath = getAbsolutePath(toObject);
+    const path = [];
+
+    const fromDepth = fromPath.length-1;
+    const toDepth = toPath.length-1;
+    const maxDepth = Math.max(fromDepth,toDepth);
+    
+    let divergenceObject = null;
+
+    for (let depth = 0; depth <= maxDepth; depth++) {
+        const fromIndex = fromPath[depth].index;
+        const toIndex = toPath[depth].index;
+
+        if (depth==fromDepth && depth==toDepth && divergenceObject===null) { // Objects have the same parent
+            path.push({index:toIndex,parent:true});
+            break;
+        }
+
+        if (divergenceObject) {
+            if (depth<=fromDepth) {
+                path.unshift({parent:true});
+            }
+
+            if (depth<=toDepth) {
+                path.push({index:toIndex});
+            }
+        } else {
+            if (fromIndex!=toIndex && depth<=Math.min(fromDepth,toDepth)) {
+                divergenceObject = findObjectByPath(fromPath.slice(0,depth));
+                break;
+            }
+
+            if (depth>toDepth) {
+                path.push({parent:true});
+            }
+
+            if (depth>fromDepth) {
+                path.push({index:toIndex});
+            }
+        }
+    }
 }
 
 export function updateDescendents(object) {

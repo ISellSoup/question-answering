@@ -1,0 +1,8 @@
+{
+    "name": "Data Tree Editor",
+    "saveName": "built-in:dataTree",
+    "version": "1.0.0",
+    "description": "An editor for viewing and editing hierarchical data structures.",
+    "dependencies": [],
+    "type": "Editor"
+}

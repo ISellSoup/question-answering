@@ -1,0 +1,8 @@
+{
+    "name": "Body multipliers",
+    "saveName": "built-in:bodyMultipliers",
+    "version": "1.0.0",
+    "description": "An editor for viewing and editing hierarchical data structures.",
+    "dependencies": [],
+    "type": "Extension"
+}

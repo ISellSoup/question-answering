@@ -17,7 +17,7 @@
                     .then((async (response) => {
                         console.log('Module "jsonFetch.js" loaded', "Fetching built-in set:", setName);
 
-                        loadedSet = await response.fetchBuiltInSet(setName);
+                        loadedSet = (await response.fetchBuiltInSet(setName)).set;
                         window.dispatchEvent(setLoadedEvent);
                     }))
                     .catch((error) => {
@@ -38,19 +38,19 @@
             } catch (err) {
                 console.warn(`Failed to load set "${setName}" of type "${setType}"`)
 
-                document.body.innerHTML += `<h1>Failed to load ${setType} set "${setName}"</h1>`
+                document.getElementById("info").innerHTML = `<h1>Failed to load ${setType} set "${setName}"</h1>`
             }
         </script>
         <script>
             window.addEventListener('application:setLoaded', () => {
-                console.log('Set loaded:', loadedSet);
+                console.log('Loaded set:', loadedSet);
 
-                document.body.innerHTML += `<h1>Loaded set: ${loadedSet.displayName}</h1>`
+                document.getElementById("info").innerHTML = `<h1>Loaded set: ${loadedSet.displayName}</h1>`
             });
         </script>
         <link rel="stylesheet" href="/styles/global.css">
     </head>
     <body>
-        <button onclick="console.log('click')">Print</button>
+        <h1 id="info">...</h1>
     </body>
 </html>

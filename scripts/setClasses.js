@@ -14,7 +14,9 @@ class ApplicationObject extends EventTarget {
         this.temp = {
             parent:null
         } // Values inside temp are not saved
-        this.editor = {} // Editor metadata
+        this.meta = {} // Saved but not used by the application. Intended for extensions.
+
+        this.className = "ApplicationObject";
     }
 }
 
@@ -30,7 +32,7 @@ class Collection extends ApplicationObject {
 
 class Set extends Collection {
     constructor() {
-        super([]);
+        super([new Folder(), new Folder()]); // First folder is content, second is body
         this.description = "";
 
         this.body = [];
