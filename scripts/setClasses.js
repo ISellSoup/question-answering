@@ -1,3 +1,5 @@
+console.log("Loaded class definitions");
+
 const treeUpdateEvent = new Event("application:treeUpdate");
 let bodyAllowList = [ // Only these classes can be added to the set's body
     "ContentReference",
@@ -11,6 +13,7 @@ let contentsDenyList = [ // These classes cannot be added to the set's contents
 
 class ApplicationObject extends EventTarget {
     constructor() {
+        super()
         this.temp = {
             parent:null
         } // Values inside temp are not saved
@@ -30,7 +33,7 @@ class Collection extends ApplicationObject {
     }
 }
 
-class Set extends Collection {
+class ApplicationSet extends Collection {
     constructor() {
         super([new Folder(), new Folder()]); // First folder is content, second is body
         this.description = "";
@@ -44,7 +47,7 @@ class Set extends Collection {
 class ContentReference extends ApplicationObject {
     constructor() {
         super()
-        this.path = []; //An array of indexes pointing to the target
+        this.path = [];
         this.temp.target = null; 
         this.enabled = true;
 
