@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="module">
+            import OpenDB from "/modules/IDBStorage.js"
+            window.store = async (index,value)=>{
+                const db = await OpenDB("debug",1,(db)=>{
+                    db.createObjectStore("sets", {keyPath:"index"})
+                })
+
+                const transaction = db.transaction("sets", "readwrite");
+                const store = transaction.objectStore("sets");
+
+                store.put({index:index,value:value});
+
+                transaction.oncomplete = ()=>{
+                    db.close()
+                }
+            }
+        </script>
+        <link rel="stylesheet" href="/styles/global.css">
+    </head>
+</html>

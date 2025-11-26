@@ -1,11 +1,9 @@
-console.log("Loaded class definitions");
-
 const treeUpdateEvent = new Event("application:treeUpdate");
 let bodyAllowList = [ // Only these classes can be added to the set's body
     "ContentReference",
     "Group",
     "Folder",
-    "QuestionAsnwersPair"
+    "QuestionAnswersPair"
 ]
 let contentsDenyList = [ // These classes cannot be added to the set's contents
     "ContentReference"
@@ -18,8 +16,6 @@ class ApplicationObject extends EventTarget {
             parent:null
         } // Values inside temp are not saved
         this.meta = {} // Saved but not used by the application. Intended for extensions.
-
-        this.className = "ApplicationObject";
     }
 }
 
@@ -28,8 +24,6 @@ class Collection extends ApplicationObject {
         super()
         this.contents = contents;
         this.displayName = "";
-
-        this.className = "Collection";
     }
 }
 
@@ -39,8 +33,6 @@ class ApplicationSet extends Collection {
         this.description = "";
 
         this.body = [];
-
-        this.className = "Set";
     }
 }
 
@@ -50,8 +42,6 @@ class ContentReference extends ApplicationObject {
         this.path = [];
         this.temp.target = null; 
         this.enabled = true;
-
-        this.className = "QuestionAsnwerPair";
     }
 }
 
@@ -59,8 +49,6 @@ class WordBank extends Collection {
     constructor(contents = []) {
         super(contents);
         this.enabled = true;
-
-        this.className = "WordBank";
     }
 }
 
@@ -69,8 +57,6 @@ class WordBankEntry extends ApplicationObject {
         super()
         this.value = value;
         this.enabled = true;
-
-        this.className = "WordBankEntry";
     }
     convertToWordBank() {
         window.dispatchEvent(treeUpdateEvent);
@@ -85,8 +71,6 @@ class QuestionAnswersPair extends ApplicationObject {
         // Can be a string or a WordBank
         this.answers = answers;
         this.enabled = true;
-
-        this.className = "QuestionAsnwerPair";
     }
 }
 
@@ -95,8 +79,6 @@ class Group extends Collection {
     constructor(contents = []) {
         super(contents);
         this.enabled = true;
-
-        this.className = "Group";
     }
     folder() {
         const folder = new Folder(this.contents);
@@ -112,7 +94,6 @@ class Group extends Collection {
 class Folder extends Collection {
     constructor(contents = []) {
         super(contents);
-        this.className = "Folder";
     }
     group() {
         const group = new Group(this.contents);
@@ -122,5 +103,8 @@ class Folder extends Collection {
 
         window.dispatchEvent(treeUpdateEvent);
         return group;
+    }
+    passEnabled() {
+        return this.temp.parent?.enabled ?? this.temp.parent?.passEnabled() ?? true
     }
 }

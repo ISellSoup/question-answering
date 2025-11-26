@@ -8,6 +8,8 @@ function plainObjectToClass(object, className) {
 
 function classObjectToPlain(object) {
     const output = Object.assign({},object);
+    output.className = object.constructor.name;
+
     delete output.temp; // Delete temporary data
     for (const Key in output) { // Delete class methods
         if (typeof output.Key == "function") delete output.Key;
