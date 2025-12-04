@@ -6,17 +6,22 @@ let bodyAllowList = [ // Only these classes can be added to the set's body
     "QuestionAnswersPair"
 ]
 let contentsDenyList = [ // These classes cannot be added to the set's contents
-    "ContentReference"
+    
 ]
 
 class ApplicationObject extends EventTarget {
     constructor() {
         super()
         this.temp = {
-            parent:null
+            parent:null,
+            deleted:false
         } // Values inside temp are not saved
         this.meta = {} // Saved but not used by the application. Intended for extensions.
     }
+    referenceRemoved(key) {
+        object[key] = undefined
+    }
+    treeUpdate() {}
 }
 
 class Collection extends ApplicationObject {
@@ -24,6 +29,12 @@ class Collection extends ApplicationObject {
         super()
         this.contents = contents;
         this.displayName = "";
+    }
+    treeUpdate() {
+        this.contents.forEach(child => {
+            child.parent = this
+            child.treeUpdate()
+        })
     }
 }
 
@@ -36,12 +47,17 @@ class ApplicationSet extends Collection {
     }
 }
 
-class ContentReference extends ApplicationObject {
+class ContentReference extends ApplicationObject { // Can be used in content for better organization
     constructor() {
         super()
+        // NEVER in the future make this class able to store multiple references. Put these in a group instead
         this.path = [];
         this.temp.target = null; 
         this.enabled = true;
+    }
+    referenceRemoved(key) {
+        super.referenceRemoved(key)
+        this.path = getAbsolutePath(this.temp.target)
     }
 }
 
@@ -64,12 +80,12 @@ class WordBankEntry extends ApplicationObject {
     }
 }
 
-class QuestionAnswersPair extends ApplicationObject {
+class QuestionAnswersPair extends Collection {
     constructor(question = "", answers = []) {
         super()
         this.question = question;
         // Can be a string or a WordBank
-        this.answers = answers;
+        this.contents = answers;
         this.enabled = true;
     }
 }

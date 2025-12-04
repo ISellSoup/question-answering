@@ -90,7 +90,7 @@ export function getRelativePath(fromObject,toObject) {
 
 export function updateDescendents(object) {
     function depthUpdateChildren(child, parent) { //Child is operated on, parent is not always defined
-        child.temp.parent = parent ?? null
+        child.temp.parent = parent ?? child.temp.parent ?? null
         if (child.contents) child.contents.array.forEach((item)=>{depthUpdateChildren(item,child)});
     }
 
@@ -98,5 +98,24 @@ export function updateDescendents(object) {
 }
 
 export function deleteTreeObject(path) {
+    const deletionObject = findObjectByPath(path)
+    const siblings = deletionObject.temp.parent.contents
 
+    function depthRefUpdate(object) {
+        const contents = object.contents
+
+        object.keys().forEach(key => {
+            if (object[key]===object) {
+                object.referenceRemoved(key)
+            }
+        })
+
+        if (typeof contents != "array") return;
+
+        contents.forEach(item => {
+            depthRefUpdate(item)
+        });
+    }
+
+    depthRefUpdate(window.activeSet)
 }
