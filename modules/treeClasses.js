@@ -1,15 +1,16 @@
-const treeUpdateEvent = new Event("application:treeUpdate");
-let bodyAllowList = [ // Only these classes can be added to the set's body
+import * as events from "/modules/applicationEvents.js";
+
+export let bodyAllowList = [ // Only these classes can be added to the set's body
     "ContentReference",
     "Group",
     "Folder",
     "QuestionAnswersPair"
 ]
-let contentsDenyList = [ // These classes cannot be added to the set's contents
+export let contentsDenyList = [ // These classes cannot be added to the set's contents
     
 ]
 
-class ApplicationObject extends EventTarget {
+export class TreeObject extends EventTarget {
     constructor() {
         super()
         this.temp = {
@@ -19,18 +20,21 @@ class ApplicationObject extends EventTarget {
         this.meta = {} // Saved but not used by the application. Intended for extensions.
     }
     referenceRemoved(key) {
+        this.dispatchEvent(events.referenceRemoved)
         object[key] = undefined
     }
-    treeUpdate() {}
+    treeUpdate() {
+        this.dispatchEvent(events.update)
+    }
 }
 
-class Collection extends ApplicationObject {
+export class Collection extends TreeObject {
     constructor(contents = []) {
         super()
         this.contents = contents;
-        this.displayName = "";
     }
     treeUpdate() {
+        super.treeUpdate()
         this.contents.forEach(child => {
             child.parent = this
             child.treeUpdate()
@@ -38,21 +42,26 @@ class Collection extends ApplicationObject {
     }
 }
 
-class ApplicationSet extends Collection {
-    constructor() {
-        super([new Folder(), new Folder()]); // First folder is content, second is body
-        this.description = "";
-
-        this.body = [];
+export class NamedCollection extends Collection {
+    constructor(contents = []) {
+        super(contents)
+        this.displayName = "";
     }
 }
 
-class ContentReference extends ApplicationObject { // Can be used in content for better organization
+export class ApplicationSet extends NamedCollection {
+    constructor() {
+        super([new Folder(), new Folder()]); // First folder is content, second is body
+        this.description = "";
+    }
+}
+
+export class ContentReference extends TreeObject { // Can be used in content for better organization
     constructor() {
         super()
-        // NEVER in the future make this class able to store multiple references. Put these in a group instead
+        // NEVER in the future make this class able to store multiple references. Put these in a instances in a group instead
         this.path = [];
-        this.temp.target = null; 
+        this.temp.target = null;
         this.enabled = true;
     }
     referenceRemoved(key) {
@@ -61,14 +70,14 @@ class ContentReference extends ApplicationObject { // Can be used in content for
     }
 }
 
-class WordBank extends Collection {
+export class WordBank extends NamedCollection {
     constructor(contents = []) {
         super(contents);
         this.enabled = true;
     }
 }
 
-class WordBankEntry extends ApplicationObject {
+export class WordBankEntry extends TreeObject {
     constructor(value = "") {
         super()
         this.value = value;
@@ -80,18 +89,17 @@ class WordBankEntry extends ApplicationObject {
     }
 }
 
-class QuestionAnswersPair extends Collection {
+export class QuestionAnswersPair extends Collection {
     constructor(question = "", answers = []) {
-        super()
+        super(answers)
         this.question = question;
         // Can be a string or a WordBank
-        this.contents = answers;
         this.enabled = true;
     }
 }
 
 // Groups of other Groups or objects, used for batch enable/disable
-class Group extends Collection {
+export class Group extends NamedCollection {
     constructor(contents = []) {
         super(contents);
         this.enabled = true;
@@ -107,7 +115,7 @@ class Group extends Collection {
 }
 
 // Folders do not have an enabled property. Passes parent's enabled/disabled.
-class Folder extends Collection {
+export class Folder extends NamedCollection {
     constructor(contents = []) {
         super(contents);
     }

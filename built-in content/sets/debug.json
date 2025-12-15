@@ -1,4 +1,24 @@
 {
-    "displayName": "Debug Set",
-    "description": "This is a debug built-in set."
+    "contents":[
+        {
+            "contents":[],
+            "displayName":"Content",
+            "className":"Folder"
+        },
+        {
+            "contents":[
+                {
+                    "question":"question",
+                    "contents":["abc"],
+                    "enabled":true,
+                    "className":"QuestionAnswersPair"
+                }
+            ],
+            "displayName":"Body",
+            "className":"Folder"
+        }
+    ],
+    "displayName":"Test-1",
+    "description":"",
+    "className":"ApplicationSet"
 }

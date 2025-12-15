@@ -9,7 +9,7 @@ export const indexedDB =
 
 
 export default async function open(name,version,upgradeCallback) {
-    const request = indexedDB.open("UserContent",1);
+    const request = indexedDB.open(name,version);
 
     request.onupgradeneeded = ()=>{upgradeCallback(request.result)}
     
@@ -28,4 +28,11 @@ export default async function open(name,version,upgradeCallback) {
             reject(e)
         };
     })
+}
+
+export async function openUserContent() {
+    var db = await open("UserContent",1,()=>{
+        
+    })
+
 }

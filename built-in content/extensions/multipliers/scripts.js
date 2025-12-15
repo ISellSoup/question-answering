@@ -1,5 +1,5 @@
 export default scripts = {
-    beforeQuestionLoad: {
+    beforeQuestionsLoad: {
         priority:0,
         styles:[],
         script: ()=>{}

@@ -1,0 +1,6 @@
+export const editInteraction = new Event("application:editInteraction")
+export const elementCreated = new Event("application:editorElementCreated")
+export const elementRemoved = new Event("application:editorElementRemoved")
+export const changed = new Event("application:changed")
+export const update = new Event("application:update")
+export const referenceRemoved = new Event("application:referenceRemoved")
